@@ -36,8 +36,14 @@ my_cols <- c("COD_ENCUESTAS", "U_DPTO", "U_MPIO", "UA_CLASE", "U_VIVIENDA", "U_E
 
 df <- df[my_cols]
 rm(VIVIENDAS, HOGAR, PERSONA)
-new_df <- merge(df, MGN, by = c("COD_ENCUESTAS",  "U_DPTO", "U_MPIO", "UA_CLASE", "U_EDIFICA", "U_VIVIENDA"))
+df <- merge(df, MGN, by = c("COD_ENCUESTAS",  "U_DPTO", "U_MPIO", "UA_CLASE", "U_EDIFICA", "U_VIVIENDA"))
+rm(MGN)
 
 ### 3. Análisis exploratorio ####
+localidad_total <- as.data.frame(table(df$COD_DANE_ANM, df$PA_LUG_NAC)) 
+table(df$COD_DANE_ANM)
+names(localidad_total)[names(localidad_total) == "Freq"] <- "Total"
 
-
+localidad_nacionalidad <- as.data.frame(round(svytable(~NPCEP11AC + LOCALIDAD_TEX, design= df_ponderada ), 0)) 
+localidad_nacionalidad <- localidad_nacionalidad[localidad_nacionalidad$NPCEP11AC == "VENEZUELA", c(2,3)]
+names(localidad_nacionalidad)[names(localidad_nacionalidad) == "Freq"] <- "Venezolanos"
