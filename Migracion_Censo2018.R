@@ -3,8 +3,9 @@ rm(list=ls())
 dec = ","
 delim = ","
 ### 1. Abrir bases de datos ####
+options(digits = 22)
 MGN <- read.csv("/home/jenny/Desktop/Bases_general/Censo/Bogota/CNPV2018_MGN_A2_11.CSV",
-                sep = delim)
+                sep = delim, colClasses=c('factor'))
 
 VIVIENDAS <- read.csv("/home/jenny/Desktop/Bases_general/Censo/Bogota/CNPV2018_1VIV_A2_11.CSV",
                       sep = delim)
@@ -36,14 +37,13 @@ my_cols <- c("COD_ENCUESTAS", "U_DPTO", "U_MPIO", "UA_CLASE", "U_VIVIENDA", "U_E
 
 df <- df[my_cols]
 rm(VIVIENDAS, HOGAR, PERSONA)
-df <- merge(df, MGN, by = c("COD_ENCUESTAS",  "U_DPTO", "U_MPIO", "UA_CLASE", "U_EDIFICA", "U_VIVIENDA"))
+drops <- c("U_DPTO", "U_MPIO", "UA_CLASE", "U_EDIFICA", "U_VIVIENDA")
+df <- merge(df[ , !(names(df) %in% drops)], 
+            MGN, by = c("COD_ENCUESTAS"))
 rm(MGN)
+#df <- merge(df, MGN, by = c("COD_ENCUESTAS",  "U_DPTO", "U_MPIO", "UA_CLASE", "U_EDIFICA", "U_VIVIENDA"))
 
 ### 3. Análisis exploratorio ####
-localidad_total <- as.data.frame(table(df$COD_DANE_ANM, df$PA_LUG_NAC)) 
-table(df$COD_DANE_ANM)
-names(localidad_total)[names(localidad_total) == "Freq"] <- "Total"
-
-localidad_nacionalidad <- as.data.frame(round(svytable(~NPCEP11AC + LOCALIDAD_TEX, design= df_ponderada ), 0)) 
-localidad_nacionalidad <- localidad_nacionalidad[localidad_nacionalidad$NPCEP11AC == "VENEZUELA", c(2,3)]
-names(localidad_nacionalidad)[names(localidad_nacionalidad) == "Freq"] <- "Venezolanos"
+options(digits = 22)
+localidad_nacionalidad <- as.data.frame(table(format(df$COD_DANE_ANM), df$PA_LUG_NAC))
+write.csv(localidad_nacionalidad, "/home/jenny/Desktop/FIP/Migracion/localidad_nacionalidad_CENSO.csv")
