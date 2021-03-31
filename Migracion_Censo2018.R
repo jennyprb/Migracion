@@ -38,12 +38,15 @@ my_cols <- c("COD_ENCUESTAS", "U_DPTO", "U_MPIO", "UA_CLASE", "U_VIVIENDA", "U_E
 df <- df[my_cols]
 rm(VIVIENDAS, HOGAR, PERSONA)
 drops <- c("U_DPTO", "U_MPIO", "UA_CLASE", "U_EDIFICA", "U_VIVIENDA")
-df <- merge(df[ , !(names(df) %in% drops)], 
-            MGN, by = c("COD_ENCUESTAS"))
-rm(MGN)
+df <- merge(df[ , !(names(df) %in% drops)], MGN, by = c("COD_ENCUESTAS"))
+
 #df <- merge(df, MGN, by = c("COD_ENCUESTAS",  "U_DPTO", "U_MPIO", "UA_CLASE", "U_EDIFICA", "U_VIVIENDA"))
+rm(MGN)
 
 ### 3. Análisis exploratorio ####
 options(digits = 22)
-localidad_nacionalidad <- as.data.frame(table(format(df$COD_DANE_ANM), df$PA_LUG_NAC))
+manzanas_nacionalidad <- as.data.frame(table(format(df$COD_DANE_ANM), df$PA_LUG_NAC))
+write.csv(manzanas_nacionalidad, "/home/jenny/Desktop/FIP/Migracion/manzanas_nacionalidad_CENSO.csv")
+
+localidad_nacionalidad <- as.data.frame(table(format(df$UA1_LOCALIDAD), df$PA_LUG_NAC))
 write.csv(localidad_nacionalidad, "/home/jenny/Desktop/FIP/Migracion/localidad_nacionalidad_CENSO.csv")
