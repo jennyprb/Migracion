@@ -95,12 +95,12 @@ svytable(~DPTOMPIO, design= df_ponderada)
 localidad_total <- as.data.frame(svytable(~LOCALIDAD_TEX, design= df_ponderada)) 
 names(localidad_total)[names(localidad_total) == "Freq"] <- "Total"
 
-localidad_nacionalidad <- as.data.frame(round(svytable(~NPCEP11AC + LOCALIDAD_TEX, design= df_ponderada ), 2)) 
+localidad_nacionalidad <- as.data.frame(round(svytable(~NPCEP11AC + LOCALIDAD_TEX, design= df_ponderada ), 0)) 
 localidad_nacionalidad <- localidad_nacionalidad[localidad_nacionalidad$NPCEP11AC == "VENEZUELA", c(2,3)]
 names(localidad_nacionalidad)[names(localidad_nacionalidad) == "Freq"] <- "Venezolanos"
 
 poblacion <- merge(localidad_total, localidad_nacionalidad, by = c("LOCALIDAD_TEX"), all.y = TRUE)
-
+poblacion["% Venezolano"] <- (poblacion$Venezolanos/poblacion$Total)*100
 
 #round(prop.table(svytable(~NPCEP11AC + LOCALIDAD_TEX, design= df_ponderada ), 1) * 100, 2)
 
